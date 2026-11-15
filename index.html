@@ -81,6 +81,18 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
   </svg>
  </div>
 </div></header>
+<section class="wrap" id="cloudPanel" style="padding-top:14px">
+<div class="panel">
+ <strong>اتصال ابری دفتر آرزوها</strong>
+ <p id="cloudStatus" class="hint">برای همگام‌سازی، مدیر وارد شود. خانواده از لینک مشاهده استفاده می‌کند.</p>
+ <div id="adminLogin" class="grid">
+  <div><label>ایمیل مدیر</label><input id="adminEmail" type="email" autocomplete="username" placeholder="ایمیل حساب Supabase"></div>
+  <div><label>رمز عبور</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="رمز عبور"></div>
+  <div class="actions full"><button class="btn" onclick="adminLogin()">ورود مدیر</button><button class="btn secondary" onclick="adminLogout()">خروج</button><button class="btn secondary" onclick="createShareLink()">ساخت لینک خانوادگی</button></div>
+ </div>
+ <p id="shareOutput" style="overflow-wrap:anywhere"></p>
+</div>
+</section>
 <main class="wrap">
 <section class="stats">
 <div class="stat"><small>تعداد آرزوها</small><strong id="sTotal">۰</strong></div>
@@ -101,7 +113,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 </div>
 <div id="cards" class="cards"></div>
 </main>
-<footer>اطلاعات در همین مرورگر ذخیره می‌شود. برای انتقال به دستگاه دیگر، از «پشتیبان‌گیری» استفاده کن.</footer>
+<footer>نسخه ابری: تغییرات مدیر پس از ذخیره در همه دستگاه‌ها همگام می‌شود.</footer>
 
 <dialog id="wishDialog">
 <div class="modal-head"><strong id="dialogTitle">آرزوی جدید</strong><button class="btn small secondary" onclick="closeForm()">بستن</button></div>
@@ -179,12 +191,62 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 <script>
 const CATS=['سفر و گردشگری','خرید وسایل و تجهیزات','خانه و دکوراسیون','خودرو و وسایل نقلیه','خانواده و روابط','سلامتی و تناسب اندام','آموزش و یادگیری','شغل و کسب‌وکار','تفریح و تجربه‌های جدید','اهداف مالی','آرزوهای شخصی','سایر موارد'];
 let wishes=JSON.parse(localStorage.getItem('wishlist_v3')||'[]');
+const shareToken=new URLSearchParams(location.search).get('share');
 let imageData='';
 let imageList=[];
 const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat('fa-IR').format(Math.round(Number(n)||0))+' kr';
 const num=id=>Math.max(0,Number($(id).value)||0);
-function saveAll(){localStorage.setItem('wishlist_v3',JSON.stringify(wishes));render()}
+function saveAll(){
+ localStorage.setItem('wishlist_v3',JSON.stringify(wishes));render();
+ if(isAdmin && cloudReady){clearTimeout(syncTimer);syncTimer=setTimeout(syncToCloud,500)}
+}
+async function syncToCloud(){
+ const {error}=await sb.rpc('admin_save_wishes',{p_wishes:wishes});
+ if(error){$('cloudStatus').textContent='ذخیره محلی انجام شد؛ همگام‌سازی ابری ناموفق بود: '+error.message}
+ else $('cloudStatus').textContent='همگام‌سازی ابری انجام شد.';
+}
+async function adminLogin(){
+ const email=$('adminEmail').value.trim(),password=$('adminPassword').value;
+ if(!email||!password){alert('ایمیل و رمز عبور را وارد کن.');return}
+ const {error}=await sb.auth.signInWithPassword({email,password});
+ if(error){alert('ورود ناموفق بود: '+error.message);return}
+ const {data}=await sb.auth.getSession();
+ const localCopy=JSON.parse(localStorage.getItem('wishlist_v3')||'[]');
+ const {data:loaded,error:loadErr}=await sb.rpc('admin_get_wishes');
+ if(loadErr){await sb.auth.signOut();alert('حساب وارد شد اما دسترسی مدیر تنظیم نشده است. ایمیل را در SQL ثبت کن و SQL را اجرا کن.');return}
+ isAdmin=true;sharedMode=false;cloudReady=true;
+ if((!loaded || loaded.length===0) && localCopy.length>0){
+   if(confirm('در فضای ابری هنوز آرزویی نیست. آرزوهای ذخیره‌شده در همین مرورگر به فضای ابری منتقل شوند؟')){
+     wishes=localCopy;localStorage.setItem('wishlist_v3',JSON.stringify(wishes));await syncToCloud();
+   }else{wishes=[];localStorage.setItem('wishlist_v3','[]')}
+ }else{wishes=loaded||[];localStorage.setItem('wishlist_v3',JSON.stringify(wishes))}
+ setReadOnly(false);render();$('cloudStatus').textContent='وارد حساب مدیر شدی؛ تغییرات به‌صورت خودکار در فضای ابری ذخیره می‌شوند.';
+}
+async function adminLogout(){
+ await sb.auth.signOut();isAdmin=false;cloudReady=false;
+ if(shareToken){await loadShared()}else{setReadOnly(true);$('cloudStatus').textContent='از حساب مدیر خارج شدی. برای تغییر اطلاعات دوباره وارد شو.'}
+}
+function setReadOnly(readonly){
+ document.querySelectorAll('.toolbar .btn').forEach((b,i)=>{if(i===0)b.style.display=readonly?'none':''});
+ $('adminLogin').style.display=readonly?'none':'grid';
+ if(readonly){$('cloudPanel').style.display=shareToken?'none':'block'}
+}
+async function loadShared(){
+ sharedMode=true;isAdmin=false;setReadOnly(true);
+ const {data,error}=await sb.rpc('get_shared_wishes',{p_token:shareToken});
+ if(error){$('cloudStatus').textContent='لینک خانوادگی معتبر نیست یا دسترسی برقرار نشد.';wishes=[]}
+ else{wishes=data||[];$('cloudStatus').textContent='نمایش خانوادگی؛ فقط مشاهده.'}
+ render();
+}
+async function createShareLink(){
+ if(!isAdmin){alert('ابتدا به‌عنوان مدیر وارد شو.');return}
+ const {data,error}=await sb.rpc('admin_get_share_token');
+ if(error){alert('ساخت لینک ناموفق بود: '+error.message);return}
+ const url=location.origin+location.pathname+'?share='+data;
+ $('shareOutput').innerHTML='لینک مشاهده خانواده: <a href="'+url+'" target="_blank" rel="noopener">'+url+'</a>';
+}
+
 function initCats(){
  $('category').innerHTML=CATS.map(x=>`<option>${x}</option>`).join('');
  $('category').addEventListener('change',()=>renderCategoryFields({}));
@@ -241,7 +303,7 @@ function addStepRow(value='',done=false){
  $('stepsEditor').appendChild(d);
 }
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function openForm(id=null){
+function openForm(id=null){if(!isAdmin){alert('فقط مدیر می‌تواند آرزوها را تغییر دهد.');return}
  $('wishForm').reset();$('editId').value='';$('linksEditor').innerHTML='';$('stepsEditor').innerHTML='';imageData='';imageList=[];$('photoPreview').innerHTML='';$('image').value='';
  $('adults').value=1;$('children').value=0;$('progress').value=0;
  $('dialogTitle').textContent=id?'ویرایش آرزو':'آرزوی جدید';
@@ -333,13 +395,13 @@ function render(){
  ${(w.category==='سفر و گردشگری'||w.category==='خانواده و روابط')?`<p>افراد: ${(w.adults||0)+(w.children||0)} نفر (${w.adults||0} بزرگسال، ${w.children||0} کودک)</p><p>هزینه بزرگسالان: ${money((w.adults||0)*(w.adultCost||0))} | هزینه کودکان: ${money((w.children||0)*(w.childCost||0))}</p><p>هزینه ثابت: ${money(w.fixedCost||0)}</p>`:`<p>${Object.entries(w.extraDetails||{}).filter(([k,v])=>v).slice(0,2).map(([k,v])=>`<b>${esc(k)}:</b> ${esc(v)}`).join(' | ')}</p>`}
  <p>بودجه کل: <b>${money(w.budget)}</b> | پس‌انداز: ${money(w.saved)}</p>
  <div class="progress"><span style="width:${Math.min(100,w.progress)}%"></span></div><p>پیشرفت: ${w.progress}%</p>
- <div class="actions"><button class="btn small" onclick="details('${w.id}')">جزئیات</button><button class="btn small secondary" onclick="openForm('${w.id}')">ویرایش</button><button class="btn small danger" onclick="removeWish('${w.id}')">حذف</button></div></article>`).join(''):'<div class="panel full">هنوز آرزویی ثبت نشده است. از دکمه «افزودن آرزوی جدید» شروع کن.</div>';
+ <div class="actions"><button class="btn small" onclick="details('${w.id}')">جزئیات</button>${isAdmin?`<button class="btn small secondary" onclick="openForm('${w.id}')">ویرایش</button><button class="btn small danger" onclick="removeWish('${w.id}')">حذف</button>`:''}</div></article>`).join(''):'<div class="panel full">هنوز آرزویی ثبت نشده است. از دکمه «افزودن آرزوی جدید» شروع کن.</div>';
  $('sTotal').textContent=new Intl.NumberFormat('fa-IR').format(wishes.length);
  $('sDone').textContent=new Intl.NumberFormat('fa-IR').format(wishes.filter(w=>w.status==='تحقق‌یافته').length);
  $('sBudget').textContent=money(wishes.reduce((s,w)=>s+(Number(w.budget)||0),0));
  $('sSaved').textContent=money(wishes.reduce((s,w)=>s+(Number(w.saved)||0),0));
 }
-function removeWish(id){if(confirm('این آرزو حذف شود؟')){wishes=wishes.filter(w=>w.id!==id);saveAll()}}
+function removeWish(id){if(!isAdmin)return;if(confirm('این آرزو حذف شود؟')){wishes=wishes.filter(w=>w.id!==id);saveAll()}}
 function details(id){
  const w=wishes.find(x=>x.id===id);if(!w)return;
  $('detailTitle').textContent=w.title;
@@ -358,7 +420,7 @@ function exportData(){
  const blob=new Blob([JSON.stringify(wishes,null,2)],{type:'application/json'}),a=document.createElement('a');
  a.href=URL.createObjectURL(blob);a.download='wishlist-backup.json';a.click();URL.revokeObjectURL(a.href);
 }
-function importData(e){
+function importData(e){if(!isAdmin){alert('بازیابی فقط برای مدیر فعال است.');return}
  const f=e.target.files[0];if(!f)return;const r=new FileReader();
  r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d))throw 0;if(confirm('اطلاعات فعلی با فایل پشتیبان جایگزین شود؟')){wishes=d;saveAll()}}catch{alert('فایل پشتیبان معتبر نیست')}};r.readAsText(f);e.target.value='';
 }
