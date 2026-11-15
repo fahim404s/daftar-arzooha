@@ -188,17 +188,18 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
  </div>
 </dialog>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // اتصال ابری پروژه دفتر آرزوها
-const sb = window.supabase.createClient(
+if (!window.supabase || !window.supabase.createClient) { alert("کتابخانه اتصال ابری بارگذاری نشد. صفحه را با اینترنت تازه‌سازی کنید."); throw new Error("Supabase SDK not loaded"); }
+var sb = window.supabase.createClient(
   "https://wkiygtbwjfugkgffaiwq.supabase.co",
   "sb_publishable__QGle8S1dfbZn353gJ5hng_gij2y7Hy"
 );
-let isAdmin = false;
-let cloudReady = false;
-let sharedMode = false;
-let syncTimer = null;
+var isAdmin = false;
+var cloudReady = false;
+var sharedMode = false;
+var syncTimer = null;
 const CATS=['سفر و گردشگری','خرید وسایل و تجهیزات','خانه و دکوراسیون','خودرو و وسایل نقلیه','خانواده و روابط','سلامتی و تناسب اندام','آموزش و یادگیری','شغل و کسب‌وکار','تفریح و تجربه‌های جدید','اهداف مالی','آرزوهای شخصی','سایر موارد'];
 let wishes=JSON.parse(localStorage.getItem('wishlist_v3')||'[]');
 const shareToken=new URLSearchParams(location.search).get('share');
