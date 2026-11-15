@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#173b35">
+<title>دفتر آرزوها</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--bg:#f4f6f3;--card:#fff;--ink:#1d2926;--muted:#687570;--green:#1d6655;--line:#e3e9e5;--soft:#eaf3ef;--red:#b43c3c;--gold:#a46b14}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.65}
+header{position:relative;overflow:hidden;background:radial-gradient(circle at 12% 15%,#ffffff18 0 2px,transparent 3px),linear-gradient(120deg,#143e37 0%,#1e6658 58%,#328875 100%);color:white;padding:26px 18px 28px;border-bottom:4px solid #d8b76a}
+.hero{max-width:1120px;margin:auto;padding:0 16px;min-height:145px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative}
+.hero-copy{position:relative;z-index:1}.hero h1{font-size:30px;letter-spacing:-.4px;margin:8px 0}.hero p{margin:0;color:#e1f0e9;font-size:14px}
+.hero-kicker{display:inline-flex;align-items:center;gap:7px;border:1px solid #e5c77c88;background:#ffffff12;color:#f5d98e;padding:5px 12px;border-radius:30px;font-size:12px}
+.hero-art{width:210px;min-width:150px;height:135px;display:flex;align-items:center;justify-content:center;position:relative}
+.hero-art svg{width:190px;height:135px;filter:drop-shadow(0 10px 14px #092a2533)}
+.hero:before,.hero:after{content:"✦";position:absolute;color:#f1d58b;opacity:.55}
+.hero:before{left:25%;top:12px;font-size:18px}.hero:after{left:42%;bottom:10px;font-size:12px}
+@media(max-width:600px){.hero{min-height:125px}.hero-art{width:110px;min-width:95px}.hero-art svg{width:110px}.hero h1{font-size:23px}.hero p{font-size:12px}}
+.wrap{max-width:1120px;margin:auto;padding:0 16px}
+h1{font-size:25px;margin:0 0 5px}header p{margin:0;color:#d9e9e3}
+main{padding:18px 0 40px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:-6px}
+.stat,.panel,.wish{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:15px;box-shadow:0 4px 16px #173b3508}
+.stat small{display:block;color:var(--muted)}.stat strong{font-size:21px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--green);color:#fff;cursor:pointer;font:inherit}
+.btn.secondary{background:#e8efeb;color:#23443b}.btn.danger{background:#f8e9e9;color:var(--red)}.btn.small{padding:6px 10px;font-size:13px}
+input,select,textarea{width:100%;border:1px solid #d7e0da;border-radius:9px;padding:10px;font:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:85px;resize:vertical}label{font-size:13px;color:#45534e;display:block;margin:9px 0 5px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.full{grid-column:1/-1}
+.section-title{font-size:16px;margin:18px 0 5px;color:#24483e}.hint{font-size:12px;color:var(--muted)}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px;margin-bottom:14px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.wish h3{margin:0 0 5px;font-size:17px}.wish p{margin:5px 0;color:var(--muted);font-size:13px}
+
+.wish img{display:block;width:100%;height:auto;max-height:360px;object-fit:contain;object-position:center;border-radius:10px;margin:0 auto 8px;background:#f1f3f1}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:9px;margin:10px 0}
+.photo-thumb{position:relative}
+.photo-thumb img{width:100%;height:105px;object-fit:contain;background:#f4f6f3;border-radius:9px;cursor:zoom-in;border:1px solid var(--line)}
+.photo-thumb button{position:absolute;top:4px;left:4px;border:0;border-radius:50%;background:#fff;color:#a22;width:25px;height:25px;cursor:pointer}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.gallery img{display:block;width:100%;height:auto;max-height:320px;object-fit:contain;object-position:center;border-radius:10px;cursor:zoom-in;background:#f1f3f1}
+ .photo-count{font-size:12px;color:var(--muted)}
+#photoDialog{width:min(1000px,96vw);height:min(92vh,900px);background:#101815;padding:12px;overflow:hidden}
+#photoDialog::backdrop{background:#050b09e8}
+.photo-viewer{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative}
+.photo-viewer img{display:block;max-width:100%;max-height:calc(92vh - 75px);width:auto;height:auto;object-fit:contain}
+.photo-viewer button{position:absolute;top:0;right:0;z-index:2}
+.photo-viewer .photo-nav{display:flex;gap:10px;align-items:center;color:white;font-size:13px}
+.card-gallery{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:7px;margin-bottom:8px}
+.card-gallery img{max-height:130px;height:130px;object-fit:contain;cursor:zoom-in}
+
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.pill{font-size:11px;background:var(--soft);color:#285849;padding:3px 8px;border-radius:20px}
+.progress{height:8px;background:#edf0ed;border-radius:20px;overflow:hidden;margin:8px 0}.progress span{display:block;height:100%;background:#399579}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+dialog{border:0;border-radius:16px;padding:0;width:min(760px,calc(100% - 24px));max-height:90vh;box-shadow:0 20px 70px #0003}
+dialog::backdrop{background:#14211dcc}.modal-head{padding:15px 18px;background:#edf4f0;display:flex;justify-content:space-between;align-items:center}
+.modal-body{padding:16px;overflow:auto;max-height:calc(90vh - 65px)}.link-row,.step-row{display:flex;gap:7px;align-items:center;margin:7px 0}.link-row input:first-child{flex:1}.link-row input:nth-child(2){flex:2}
+.links a{display:block;color:#176b59;overflow-wrap:anywhere;margin:5px 0}
+.person-summary{background:#f0f6f2;border-radius:10px;padding:10px;margin-top:10px;font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.filters{grid-template-columns:1fr}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="hero">
+ <div class="hero-copy">
+  <span class="hero-kicker">✧ رویاها · هدف‌ها · برنامه‌ها</span>
+  <h1>دفتر آرزوها</h1>
+  <p>آرزوهایت را ثبت کن؛ برای رسیدن به آن‌ها قدم بردار.</p>
+ </div>
+ <div class="hero-art" aria-hidden="true">
+  <svg viewBox="0 0 220 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+   <path d="M38 112C19 98 27 67 51 62C51 34 83 22 104 39C123 16 162 28 164 57C190 58 202 87 184 106C169 122 62 126 38 112Z" fill="#F4E5B7" fill-opacity=".14" stroke="#F3D98E" stroke-width="2"/>
+   <rect x="70" y="54" width="83" height="66" rx="9" fill="#FFFDF6" stroke="#E8C978" stroke-width="2"/>
+   <path d="M82 70H140M82 82H133M82 94H124" stroke="#8DAD9F" stroke-width="3" stroke-linecap="round"/>
+   <path d="M145 43L151 30L157 43L170 49L157 55L151 68L145 55L132 49L145 43Z" fill="#F4D98D"/>
+   <path d="M56 42L60 33L64 42L73 46L64 50L60 59L56 50L47 46L56 42Z" fill="#F4D98D"/>
+   <path d="M174 91C174 83 185 80 189 88C193 80 204 83 204 91C204 100 189 109 189 109C189 109 174 100 174 91Z" fill="#E8B6A5"/>
+   <path d="M91 120L105 133L119 120" stroke="#F3D98E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+ </div>
+</div></header>
+<main class="wrap">
+<section class="stats">
+<div class="stat"><small>تعداد آرزوها</small><strong id="sTotal">۰</strong></div>
+<div class="stat"><small>تحقق‌یافته</small><strong id="sDone">۰</strong></div>
+<div class="stat"><small>بودجه کل</small><strong id="sBudget">۰ kr</strong></div>
+<div class="stat"><small>پس‌انداز شده</small><strong id="sSaved">۰ kr</strong></div>
+</section>
+<div class="toolbar">
+<button class="btn" onclick="openForm()">＋ افزودن آرزوی جدید</button>
+<button class="btn secondary" onclick="exportData()">پشتیبان‌گیری</button>
+<button class="btn secondary" onclick="document.getElementById('importFile').click()">بازیابی اطلاعات</button>
+<input id="importFile" type="file" accept="application/json" hidden onchange="importData(event)">
+</div>
+<div class="filters">
+<input id="search" placeholder="جستجو در آرزوها..." oninput="render()">
+<select id="filterStatus" onchange="render()"><option value="">همه وضعیت‌ها</option><option>تازه ثبت‌شده</option><option>در حال برنامه‌ریزی</option><option>در حال انجام</option><option>به تعویق افتاده</option><option>تحقق‌یافته</option><option>لغوشده</option></select>
+<select id="filterCategory" onchange="render()"><option value="">همه دسته‌ها</option></select>
+</div>
+<div id="cards" class="cards"></div>
+</main>
+<footer>اطلاعات در همین مرورگر ذخیره می‌شود. برای انتقال به دستگاه دیگر، از «پشتیبان‌گیری» استفاده کن.</footer>
+
+<dialog id="wishDialog">
+<div class="modal-head"><strong id="dialogTitle">آرزوی جدید</strong><button class="btn small secondary" onclick="closeForm()">بستن</button></div>
+<div class="modal-body">
+<form id="wishForm" onsubmit="saveWish(event)">
+<input type="hidden" id="editId">
+<div class="grid">
+<div><label>عنوان آرزو *</label><input id="title" required placeholder="مثلاً سفر خانوادگی به ترکیه"></div>
+<div><label>دسته‌بندی</label><select id="category"></select></div>
+<div><label>اولویت</label><select id="priority"><option>معمولی</option><option>مهم</option><option>ضروری</option></select></div>
+<div><label>وضعیت</label><select id="status"><option>تازه ثبت‌شده</option><option>در حال برنامه‌ریزی</option><option>در حال انجام</option><option>به تعویق افتاده</option><option>تحقق‌یافته</option><option>لغوشده</option></select></div>
+<div><label>تاریخ هدف</label><input id="targetDate" type="date"></div>
+<div><label>درصد پیشرفت</label><input id="progress" type="number" min="0" max="100" value="0"></div>
+<div class="full"><label>توضیحات</label><textarea id="description" placeholder="جزئیات آرزو..."></textarea></div>
+<div class="full"><label>تصاویر آرزو (انتخاب چند عکس هم‌زمان)</label>
+<input id="image" type="file" accept="image/*" multiple>
+<div class="hint">عکس‌ها به‌صورت خودکار کوچک‌سازی می‌شوند تا فضای کمتری اشغال کنند.</div>
+<div id="photoPreview" class="photo-grid"></div></div>
+<div><label>یادداشت شخصی</label><input id="note" placeholder="یادداشت..."></div>
+</div>
+
+<div id="peopleCostSection">
+<h3 class="section-title">تعداد افراد و هزینه سفر</h3>
+<p class="hint">این بخش برای سفر و برنامه‌هایی است که چند نفر در آن شرکت می‌کنند.</p>
+<div class="grid">
+<div><label>تعداد بزرگسالان</label><input id="adults" type="number" min="0" value="1" oninput="calcCost()"></div>
+<div><label>تعداد کودکان</label><input id="children" type="number" min="0" value="0" oninput="calcCost()"></div>
+<div><label>هزینه هر بزرگسال (kr)</label><input id="adultCost" type="number" min="0" value="0" oninput="calcCost()"></div>
+<div><label>هزینه هر کودک (kr)</label><input id="childCost" type="number" min="0" value="0" oninput="calcCost()"></div>
+<div><label>هزینه ثابت اضافی (kr)</label><input id="fixedCost" type="number" min="0" value="0" oninput="calcCost()"></div>
+<div><label>بودجه کل دستی (در صورت نیاز)</label><input id="manualBudget" type="number" min="0" placeholder="اختیاری؛ جایگزین محاسبه خودکار" oninput="calcCost()"></div>
+<div><label>مبلغ پس‌اندازشده (kr)</label><input id="saved" type="number" min="0" value="0"></div>
+<div><label>نام افراد (اختیاری)</label><input id="peopleNames" placeholder="مثلاً علی، سارا، ..."></div>
+</div>
+<div class="person-summary" id="costSummary">تعداد کل: ۱ نفر | برآورد هزینه: ۰ kr</div>
+</div>
+<div id="generalCostSection" style="display:none">
+<h3 class="section-title">بودجه و هزینه</h3>
+<div class="grid">
+<div><label>بودجه کل (kr)</label><input id="generalBudget" type="number" min="0" placeholder="هزینه موردنظر"></div>
+<div><label>مبلغ پس‌اندازشده (kr)</label><input id="generalSaved" type="number" min="0" value="0"></div>
+</div>
+<p class="hint">برای این دسته‌بندی، نیازی به وارد کردن تعداد افراد نیست.</p>
+</div>
+<div id="categoryDetailsSection">
+<h3 class="section-title">جزئیات متناسب با دسته‌بندی</h3>
+<div id="categoryDetailsFields" class="grid"></div>
+</div>
+
+<h3 class="section-title">لینک‌های مرتبط</h3>
+<p class="hint">برای هر آرزو می‌توانی چند لینک فروشگاه، نقشه، مقاله یا ویدئو اضافه کنی.</p>
+<div id="linksEditor"></div>
+<button type="button" class="btn small secondary" onclick="addLinkRow()">＋ افزودن لینک</button>
+
+<h3 class="section-title">مراحل انجام</h3>
+<div id="stepsEditor"></div>
+<button type="button" class="btn small secondary" onclick="addStepRow()">＋ افزودن مرحله</button>
+<div class="toolbar"><button class="btn" type="submit">ذخیره آرزو</button><button class="btn secondary" type="button" onclick="closeForm()">انصراف</button></div>
+</form>
+</div>
+</dialog>
+
+<dialog id="detailDialog">
+<div class="modal-head"><strong id="detailTitle">جزئیات آرزو</strong><button class="btn small secondary" onclick="document.getElementById('detailDialog').close()">بستن</button></div>
+<div class="modal-body" id="detailBody"></div>
+</dialog>
+<dialog id="photoDialog" onclick="if(event.target===this)closePhoto()">
+ <div class="photo-viewer">
+  <button class="btn small secondary" type="button" onclick="closePhoto()">بستن ×</button>
+  <img id="largePhoto" alt="نمایش تصویر">
+  <div class="photo-nav"><button class="btn small secondary" type="button" onclick="changePhoto(-1)">قبلی</button><span id="photoPosition"></span><button class="btn small secondary" type="button" onclick="changePhoto(1)">بعدی</button></div>
+ </div>
+</dialog>
+
+<script>
+const CATS=['سفر و گردشگری','خرید وسایل و تجهیزات','خانه و دکوراسیون','خودرو و وسایل نقلیه','خانواده و روابط','سلامتی و تناسب اندام','آموزش و یادگیری','شغل و کسب‌وکار','تفریح و تجربه‌های جدید','اهداف مالی','آرزوهای شخصی','سایر موارد'];
+let wishes=JSON.parse(localStorage.getItem('wishlist_v3')||'[]');
+let imageData='';
+let imageList=[];
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('fa-IR').format(Math.round(Number(n)||0))+' kr';
+const num=id=>Math.max(0,Number($(id).value)||0);
+function saveAll(){localStorage.setItem('wishlist_v3',JSON.stringify(wishes));render()}
+function initCats(){
+ $('category').innerHTML=CATS.map(x=>`<option>${x}</option>`).join('');
+ $('category').addEventListener('change',()=>renderCategoryFields({}));
+ $('filterCategory').innerHTML='<option value="">همه دسته‌ها</option>'+CATS.map(x=>`<option>${x}</option>`).join('');
+}
+function categoryMode(){
+ const cat=$('category').value||'';
+ return cat==='سفر و گردشگری'||cat==='خانواده و روابط'?'people':'general';
+}
+function renderCategoryFields(values={}){
+ const cat=$('category').value||'';
+ const mode=categoryMode();
+ $('peopleCostSection').style.display=mode==='people'?'block':'none';
+ $('generalCostSection').style.display=mode==='people'?'none':'block';
+ let fields=[];
+ if(cat==='خانه و دکوراسیون'){
+  fields=[['نوع ملک یا مورد','مثلاً خانه، آپارتمان، زمین یا مبلمان'],['شهر یا منطقه','محل موردنظر'],['متراژ (متر مربع)','مثلاً ۱۲۰'],['تعداد اتاق','مثلاً ۴'],['وضعیت یا شرایط','نوساز، بازسازی‌شده، نیازمند تعمیر...'],['ویژگی‌های موردنظر','پارکینگ، بالکن، آسانسور، حیاط و...']];
+ }else if(cat==='خرید وسایل و تجهیزات'){
+  fields=[['برند و مدل','نام برند یا مدل'],['تعداد','چند عدد؟'],['فروشگاه یا محل خرید','نام فروشگاه'],['ویژگی‌های موردنظر','اندازه، رنگ، ظرفیت و مشخصات']];
+ }else if(cat==='خودرو و وسایل نقلیه'){
+  fields=[['برند و مدل','مثلاً Tesla Model Y'],['سال ساخت','سال موردنظر'],['نوع سوخت یا موتور','برقی، هیبریدی، بنزینی...'],['شرایط و ویژگی‌ها','کارکرد، تجهیزات، رنگ و...']];
+ }else if(cat==='اهداف مالی'){
+  fields=[['نوع هدف مالی','پس‌انداز، سرمایه‌گذاری، خرید ملک و...'],['مبلغ هدف (kr)','مبلغ موردنظر'],['مهلت رسیدن به هدف','تاریخ یا بازه زمانی']];
+ }else if(cat==='آموزش و یادگیری'){
+  fields=[['موضوع یا مهارت','چه چیزی می‌خواهی یاد بگیری؟'],['مرکز یا دوره','نام مدرسه، دانشگاه یا دوره'],['مدت یا زمان موردنیاز','مدت تقریبی']];
+ }else if(cat==='شغل و کسب‌وکار'){
+  fields=[['نوع فعالیت یا کسب‌وکار','زمینه موردنظر'],['مکان یا بازار هدف','محل فعالیت'],['نیازمندی‌ها','تجهیزات، مجوزها یا منابع لازم']];
+ }else if(mode==='general'){
+  fields=[['جزئیات و ویژگی‌های موردنظر','هر اطلاعاتی که برای این آرزو مهم است...']];
+ }
+ $('categoryDetailsFields').innerHTML=fields.map((f,i)=>`<div class="${f[0].startsWith('ویژگی')||f[0].startsWith('شرایط')||f[0].startsWith('نیازمندی')||f[0].startsWith('جزئیات')?'full':''}"><label>${f[0]}</label>${f[0].includes('ویژگی')||f[0].includes('شرایط')||f[0].includes('نیازمندی')||f[0].includes('جزئیات')?`<textarea data-extra="${esc(f[0])}" placeholder="${esc(f[1])}">${esc(values[f[0]]||'')}</textarea>`:`<input data-extra="${esc(f[0])}" placeholder="${esc(f[1])}" value="${esc(values[f[0]]||'')}">`}</div>`).join('');
+}
+function readCategoryFields(){
+ const out={};
+ document.querySelectorAll('#categoryDetailsFields [data-extra]').forEach(el=>out[el.dataset.extra]=el.value.trim());
+ return out;
+}
+function calcCost(){
+ const peopleMode=categoryMode()==='people';
+ const a=peopleMode?num('adults'):0,c=peopleMode?num('children'):0;
+ const auto=peopleMode?a*num('adultCost')+c*num('childCost')+num('fixedCost'):num('generalBudget');
+ const manual=$('manualBudget').value.trim();
+ const adultTotal=a*num('adultCost'),childTotal=c*num('childCost'),total=manual!==''?Number(manual):auto;
+ $('costSummary').innerHTML=`تعداد کل: ${new Intl.NumberFormat('fa-IR').format(a+c)} نفر<br>هزینه بزرگسالان: ${new Intl.NumberFormat('fa-IR').format(a)} × ${money(num('adultCost'))} = <b>${money(adultTotal)}</b><br>هزینه کودکان: ${new Intl.NumberFormat('fa-IR').format(c)} × ${money(num('childCost'))} = <b>${money(childTotal)}</b><br>هزینه ثابت: <b>${money(num('fixedCost'))}</b>${manual!==''?'<br>بودجه دستی جایگزین محاسبه خودکار شده است.':''}<hr>مجموع بودجه: <b>${money(total)}</b>`;
+}
+function addLinkRow(label='',url='',desc=''){
+ const d=document.createElement('div');d.className='link-row';
+ d.innerHTML=`<input placeholder="عنوان لینک" value="${esc(label)}"><input placeholder="https://..." value="${esc(url)}"><input placeholder="توضیح کوتاه" value="${esc(desc)}"><button type="button" class="btn small danger" onclick="this.parentElement.remove()">×</button>`;
+ $('linksEditor').appendChild(d);
+}
+function addStepRow(value='',done=false){
+ const d=document.createElement('div');d.className='step-row';
+ d.innerHTML=`<input type="checkbox" style="width:auto" ${done?'checked':''}><input placeholder="مثلاً بررسی قیمت بلیت" value="${esc(value)}"><button type="button" class="btn small danger" onclick="this.parentElement.remove()">×</button>`;
+ $('stepsEditor').appendChild(d);
+}
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function openForm(id=null){
+ $('wishForm').reset();$('editId').value='';$('linksEditor').innerHTML='';$('stepsEditor').innerHTML='';imageData='';imageList=[];$('photoPreview').innerHTML='';$('image').value='';
+ $('adults').value=1;$('children').value=0;$('progress').value=0;
+ $('dialogTitle').textContent=id?'ویرایش آرزو':'آرزوی جدید';
+ if(id){
+  const w=wishes.find(x=>x.id===id);if(!w)return;
+  $('editId').value=id;
+  ['title','category','priority','status','targetDate','progress','description','note','saved','peopleNames','adults','children','adultCost','childCost','fixedCost','manualBudget','generalBudget','generalSaved'].forEach(k=>$(k).value=w[k]??'');
+  renderCategoryFields(w.extraDetails||{});
+  imageList=Array.isArray(w.images)?[...w.images]:(w.image?[w.image]:[]);imageData=imageList[0]||'';renderPhotoPreview();
+  (w.links||[]).forEach(l=>addLinkRow(l.label,l.url,l.desc));
+  (w.steps||[]).forEach(s=>addStepRow(s.text,s.done));
+ }else{renderCategoryFields({});addLinkRow();addStepRow()}
+ calcCost();$('wishDialog').showModal();
+}
+function closeForm(){$('wishDialog').close()}
+$('image').addEventListener('change',async e=>{
+ const files=[...e.target.files];
+ for(const file of files){
+  if(!file.type.startsWith('image/'))continue;
+  try{imageList.push(await compressImage(file));}catch(err){alert('یکی از عکس‌ها بارگذاری نشد.');}
+ }
+ imageData=imageList[0]||'';renderPhotoPreview();e.target.value='';
+});
+function compressImage(file){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();reader.onerror=reject;
+  reader.onload=()=>{
+   const img=new Image();img.onerror=reject;
+   img.onload=()=>{
+    const max=1500,scale=Math.min(1,max/Math.max(img.width,img.height));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
+    canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+    resolve(canvas.toDataURL('image/jpeg',0.78));
+   };img.src=reader.result;
+  };reader.readAsDataURL(file);
+ });
+}
+function renderPhotoPreview(){
+ $('photoPreview').innerHTML=imageList.map((src,i)=>`<div class="photo-thumb"><img src="${src}" alt="عکس ${i+1}" onclick="openPhoto(${i}, this.closest('.gallery, .photo-grid'))"><button type="button" title="حذف عکس" onclick="removePhoto(${i})">×</button></div>`).join('');
+}
+function removePhoto(i){imageList.splice(i,1);imageData=imageList[0]||'';renderPhotoPreview();}
+
+let activePhotoList=[],activePhotoIndex=0;
+function openPhoto(index,container){
+ const imgs=[...container.querySelectorAll('img')];
+ activePhotoList=imgs.map(el=>el.src);activePhotoIndex=index;
+ showPhoto();$('photoDialog').showModal();
+}
+function showPhoto(){
+ if(!activePhotoList.length)return;
+ $('largePhoto').src=activePhotoList[activePhotoIndex];
+ $('photoPosition').textContent=`${activePhotoIndex+1} از ${activePhotoList.length}`;
+}
+function changePhoto(step){
+ if(!activePhotoList.length)return;
+ activePhotoIndex=(activePhotoIndex+step+activePhotoList.length)%activePhotoList.length;
+ showPhoto();
+}
+function closePhoto(){$('photoDialog').close()}
+document.addEventListener('keydown',e=>{
+ if(!$('photoDialog').open)return;
+ if(e.key==='Escape')closePhoto();
+ if(e.key==='ArrowLeft')changePhoto(1);
+ if(e.key==='ArrowRight')changePhoto(-1);
+});
+function saveWish(e){
+ e.preventDefault();
+ const peopleMode=categoryMode()==='people';
+ const a=peopleMode?num('adults'):0,c=peopleMode?num('children'):0;
+ const auto=peopleMode?a*num('adultCost')+c*num('childCost')+num('fixedCost'):num('generalBudget');
+ const manual=$('manualBudget').value.trim();
+ const links=[...$('linksEditor').children].map(d=>{const i=d.querySelectorAll('input');return {label:i[0].value.trim(),url:i[1].value.trim(),desc:i[2].value.trim()}}).filter(x=>x.url);
+ const steps=[...$('stepsEditor').children].map(d=>({done:d.querySelector('input[type=checkbox]').checked,text:d.querySelectorAll('input')[1].value.trim()})).filter(x=>x.text);
+ const id=$('editId').value||crypto.randomUUID();
+ const old=wishes.find(w=>w.id===id);
+ const w={id,title:$('title').value.trim(),category:$('category').value,priority:$('priority').value,status:$('status').value,targetDate:$('targetDate').value,progress:num('progress'),description:$('description').value,note:$('note').value,image:imageList[0]||imageData||old?.image||'',images:imageList,adults:a,children:c,adultCost:num('adultCost'),childCost:num('childCost'),fixedCost:peopleMode?num('fixedCost'):0,manualBudget:peopleMode?manual:'',budget:peopleMode?(manual!==''?Number(manual):auto):auto,saved:peopleMode?num('saved'):num('generalSaved'),peopleNames:peopleMode?$('peopleNames').value:'',extraDetails:readCategoryFields(),links,steps,created:old?.created||new Date().toISOString()};
+ if(w.status==='تحقق‌یافته')w.progress=100;
+ if(old)wishes=wishes.map(x=>x.id===id?w:x);else wishes.unshift(w);
+ saveAll();closeForm();
+}
+function render(){
+ const q=$('search').value.toLowerCase(),st=$('filterStatus').value,cat=$('filterCategory').value;
+ const list=wishes.filter(w=>(!q||(w.title+' '+w.description).toLowerCase().includes(q))&&(!st||w.status===st)&&(!cat||w.category===cat));
+ $('cards').innerHTML=list.length?list.map(w=>`<article class="wish">
+ ${((w.images&&w.images.length)||w.image)?`<div class="gallery card-gallery">${(w.images&&w.images.length?w.images:[w.image]).map((src,i)=>`<img src="${src}" alt="تصویر ${i+1}" onclick="openPhoto(${i}, this.closest('.gallery, .photo-grid'))">`).join('')}</div>`:''}
+ <h3>${esc(w.title)}</h3><div class="pills"><span class="pill">${esc(w.category)}</span><span class="pill">${esc(w.status)}</span><span class="pill">${esc(w.priority)}</span></div>
+ <p>${esc(w.description||'بدون توضیحات')}</p>
+ ${(w.category==='سفر و گردشگری'||w.category==='خانواده و روابط')?`<p>افراد: ${(w.adults||0)+(w.children||0)} نفر (${w.adults||0} بزرگسال، ${w.children||0} کودک)</p><p>هزینه بزرگسالان: ${money((w.adults||0)*(w.adultCost||0))} | هزینه کودکان: ${money((w.children||0)*(w.childCost||0))}</p><p>هزینه ثابت: ${money(w.fixedCost||0)}</p>`:`<p>${Object.entries(w.extraDetails||{}).filter(([k,v])=>v).slice(0,2).map(([k,v])=>`<b>${esc(k)}:</b> ${esc(v)}`).join(' | ')}</p>`}
+ <p>بودجه کل: <b>${money(w.budget)}</b> | پس‌انداز: ${money(w.saved)}</p>
+ <div class="progress"><span style="width:${Math.min(100,w.progress)}%"></span></div><p>پیشرفت: ${w.progress}%</p>
+ <div class="actions"><button class="btn small" onclick="details('${w.id}')">جزئیات</button><button class="btn small secondary" onclick="openForm('${w.id}')">ویرایش</button><button class="btn small danger" onclick="removeWish('${w.id}')">حذف</button></div></article>`).join(''):'<div class="panel full">هنوز آرزویی ثبت نشده است. از دکمه «افزودن آرزوی جدید» شروع کن.</div>';
+ $('sTotal').textContent=new Intl.NumberFormat('fa-IR').format(wishes.length);
+ $('sDone').textContent=new Intl.NumberFormat('fa-IR').format(wishes.filter(w=>w.status==='تحقق‌یافته').length);
+ $('sBudget').textContent=money(wishes.reduce((s,w)=>s+(Number(w.budget)||0),0));
+ $('sSaved').textContent=money(wishes.reduce((s,w)=>s+(Number(w.saved)||0),0));
+}
+function removeWish(id){if(confirm('این آرزو حذف شود؟')){wishes=wishes.filter(w=>w.id!==id);saveAll()}}
+function details(id){
+ const w=wishes.find(x=>x.id===id);if(!w)return;
+ $('detailTitle').textContent=w.title;
+ $('detailBody').innerHTML=`${((w.images&&w.images.length)||w.image)?`<div class="gallery">${(w.images&&w.images.length?w.images:[w.image]).map((src,i)=>`<img src="${src}" alt="تصویر ${i+1}" onclick="openPhoto(${i}, this.closest('.gallery, .photo-grid'))">`).join('')}</div><p class="photo-count">${(w.images&&w.images.length)||1} عکس؛ برای بزرگ‌نمایی روی عکس بزن.</p>`:''}
+ <div class="pills"><span class="pill">${esc(w.category)}</span><span class="pill">${esc(w.status)}</span><span class="pill">${esc(w.priority)}</span></div>
+ <p>${esc(w.description||'')}</p>
+ ${(w.category==='سفر و گردشگری'||w.category==='خانواده و روابط')?`<p><b>تعداد افراد:</b> ${(w.adults||0)+(w.children||0)} نفر؛ ${w.adults||0} بزرگسال و ${w.children||0} کودک</p><p><b>هزینه بزرگسالان:</b> ${w.adults||0} × ${money(w.adultCost)} = <b>${money((w.adults||0)*(w.adultCost||0))}</b></p><p><b>هزینه کودکان:</b> ${w.children||0} × ${money(w.childCost)} = <b>${money((w.children||0)*(w.childCost||0))}</b></p><p><b>هزینه ثابت اضافی:</b> ${money(w.fixedCost)}</p><p><b>نام همراهان:</b> ${esc(w.peopleNames||'ثبت نشده')}</p>`:`<h3>جزئیات ${esc(w.category)}</h3>${Object.entries(w.extraDetails||{}).filter(([k,v])=>v).map(([k,v])=>`<p><b>${esc(k)}:</b> ${esc(v)}</p>`).join('')||'جزئیات بیشتری ثبت نشده است.'}`}
+ <p><b>بودجه کل:</b> ${money(w.budget)} | <b>پس‌انداز:</b> ${money(w.saved)} | <b>باقی‌مانده:</b> ${money(Math.max(0,w.budget-w.saved))}</p>
+ <p><b>تاریخ هدف:</b> ${esc(w.targetDate||'تعیین نشده')}</p>
+ <h3>لینک‌های مرتبط</h3><div class="links">${(w.links||[]).map(l=>`<div><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label||l.url)}</a><small>${esc(l.desc||'')}</small></div>`).join('')||'لینکی ثبت نشده'}</div>
+ <h3>مراحل</h3>${(w.steps||[]).map(s=>`<p>${s.done?'☑':'□'} ${esc(s.text)}</p>`).join('')||'مرحله‌ای ثبت نشده'}
+ <p><b>یادداشت:</b> ${esc(w.note||'')}</p>`;
+ $('detailDialog').showModal();
+}
+function exportData(){
+ const blob=new Blob([JSON.stringify(wishes,null,2)],{type:'application/json'}),a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);a.download='wishlist-backup.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(e){
+ const f=e.target.files[0];if(!f)return;const r=new FileReader();
+ r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d))throw 0;if(confirm('اطلاعات فعلی با فایل پشتیبان جایگزین شود؟')){wishes=d;saveAll()}}catch{alert('فایل پشتیبان معتبر نیست')}};r.readAsText(f);e.target.value='';
+}
+initCats();render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body></html>
