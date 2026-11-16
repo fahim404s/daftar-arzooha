@@ -9,15 +9,15 @@
 <style>
 :root{--bg:#f4f6f3;--card:#fff;--ink:#1d2926;--muted:#687570;--green:#1d6655;--line:#e3e9e5;--soft:#eaf3ef;--red:#b43c3c;--gold:#a46b14}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.65}
-header{position:relative;overflow:hidden;background:radial-gradient(circle at 12% 15%,#ffffff18 0 2px,transparent 3px),linear-gradient(120deg,#143e37 0%,#1e6658 58%,#328875 100%);color:white;padding:26px 18px 28px;border-bottom:4px solid #d8b76a}
-.hero{max-width:1120px;margin:auto;padding:0 16px;min-height:145px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative}
-.hero-copy{position:relative;z-index:1}.hero h1{font-size:30px;letter-spacing:-.4px;margin:8px 0}.hero p{margin:0;color:#e1f0e9;font-size:14px}
+header{position:relative;overflow:hidden;background:radial-gradient(circle at 12% 15%,#ffffff18 0 2px,transparent 3px),linear-gradient(120deg,#143e37 0%,#1e6658 58%,#328875 100%);color:white;padding:5px 18px;border-bottom:4px solid #d8b76a}
+.hero{max-width:1120px;margin:auto;padding:0 16px;min-height:105px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative}
+.hero-copy{position:relative;z-index:2;padding:0;margin-left:auto;margin-right:0;width:43%;max-width:43%;text-align:right}.cloud-toggle{position:absolute;top:5px;left:18px;z-index:5;height:30px;min-width:82px;padding:3px 9px;border:1px solid #e5c77caa;border-radius:9px;background:#ffffff20;color:#fff;cursor:pointer;font:inherit;font-size:11px;white-space:nowrap}.cloud-toggle:hover{background:#ffffff2b}#cloudPanel[hidden]{display:none!important}.hero h1{font-size:30px;letter-spacing:-.4px;margin:8px 0}.hero p{margin:0;color:#e1f0e9;font-size:14px}
 .hero-kicker{display:inline-flex;align-items:center;gap:7px;border:1px solid #e5c77c88;background:#ffffff12;color:#f5d98e;padding:5px 12px;border-radius:30px;font-size:12px}
-.hero-art{width:210px;min-width:150px;height:135px;display:flex;align-items:center;justify-content:center;position:relative}
-.hero-art svg{width:190px;height:135px;filter:drop-shadow(0 10px 14px #092a2533)}
+.hero-art{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:150px;min-width:0;height:94px;display:flex;align-items:center;justify-content:center;z-index:1}
+.hero-art svg{width:145px;height:94px;filter:drop-shadow(0 6px 9px #092a2533)}
 .hero:before,.hero:after{content:"✦";position:absolute;color:#f1d58b;opacity:.55}
 .hero:before{left:25%;top:12px;font-size:18px}.hero:after{left:42%;bottom:10px;font-size:12px}
-@media(max-width:600px){.hero{min-height:125px}.hero-art{width:110px;min-width:95px}.hero-art svg{width:110px}.hero h1{font-size:23px}.hero p{font-size:12px}}
+@media(max-width:600px){.cloud-toggle{top:4px;left:8px;height:27px;min-width:76px;padding:2px 7px}.hero{min-height:105px;padding:0 8px}.hero-copy{width:43%;max-width:43%;margin-left:auto;margin-right:0;padding-top:18px;text-align:right}.hero-art{width:112px;height:82px}.hero-art svg{width:112px;height:82px}.hero h1{font-size:21px;margin:5px 0}.hero p{font-size:11px}.hero-kicker{font-size:10px;padding:3px 7px}}
 .wrap{max-width:1120px;margin:auto;padding:0 16px}
 h1{font-size:25px;margin:0 0 5px}header p{margin:0;color:#d9e9e3}
 main{padding:18px 0 40px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:-6px}
@@ -64,6 +64,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
 </head>
 <body>
 <header><div class="hero">
+ <button type="button" class="cloud-toggle" onclick="toggleCloudPanel()">ورود مدیر</button>
  <div class="hero-copy">
   <span class="hero-kicker">✧ رویاها · هدف‌ها · برنامه‌ها</span>
   <h1>دفتر آرزوها</h1>
@@ -81,13 +82,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
   </svg>
  </div>
 </div></header>
-<section class="wrap" id="cloudPanel" style="padding-top:14px">
+<section class="wrap" id="cloudPanel" style="padding-top:14px" hidden>
 <div class="panel">
  <strong>اتصال ابری دفتر آرزوها</strong>
  <p id="cloudStatus" class="hint">برای همگام‌سازی، مدیر وارد شود. خانواده از لینک مشاهده استفاده می‌کند.</p>
  <div id="adminLogin" class="grid">
   <div><label>ایمیل مدیر</label><input id="adminEmail" type="email" autocomplete="username" placeholder="ایمیل حساب Supabase"></div>
-  <div><label>رمز عبور</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="رمز عبور"></div>
+  <div><label>رمز عبور</label><input id="adminPassword" type="password" autocomplete="off" placeholder="رمز عبور"></div>
   <div class="actions full"><button class="btn" onclick="adminLogin()">ورود مدیر</button><button class="btn secondary" onclick="adminLogout()">خروج</button><button class="btn secondary" onclick="createShareLink()">ساخت لینک خانوادگی</button></div>
  </div>
  <p id="shareOutput" style="overflow-wrap:anywhere"></p>
@@ -200,6 +201,7 @@ var isAdmin = false;
 var cloudReady = false;
 var sharedMode = false;
 var syncTimer = null;
+var sharedRefreshTimer = null;
 const CATS=['سفر و گردشگری','خرید وسایل و تجهیزات','خانه و دکوراسیون','خودرو و وسایل نقلیه','خانواده و روابط','سلامتی و تناسب اندام','آموزش و یادگیری','شغل و کسب‌وکار','تفریح و تجربه‌های جدید','اهداف مالی','آرزوهای شخصی','سایر موارد'];
 let wishes=JSON.parse(localStorage.getItem('wishlist_v3')||'[]');
 const shareToken=new URLSearchParams(location.search).get('share');
@@ -213,10 +215,13 @@ function saveAll(){
  if(isAdmin && cloudReady){clearTimeout(syncTimer);syncTimer=setTimeout(syncToCloud,500)}
 }
 async function syncToCloud(){
- const {error}=await sb.rpc('admin_save_wishes',{p_wishes:wishes});
- if(error){$('cloudStatus').textContent='ذخیره محلی انجام شد؛ همگام‌سازی ابری ناموفق بود: '+error.message}
- else $('cloudStatus').textContent='همگام‌سازی ابری انجام شد.';
+ try{
+  const {error}=await sb.rpc('admin_save_wishes',{p_wishes:wishes});
+  if(error){$('cloudStatus').textContent='ذخیره فقط در همین دستگاه انجام شد؛ همگام‌سازی ابری ناموفق بود: '+error.message;return}
+  $('cloudStatus').textContent='ذخیره ابری انجام شد؛ دستگاه‌های خانواده تا چند ثانیه دیگر به‌روز می‌شوند.';
+ }catch(e){$('cloudStatus').textContent='اتصال ابری برقرار نشد: '+(e.message||e)}
 }
+function toggleCloudPanel(){const panel=$('cloudPanel');panel.hidden=!panel.hidden;if(!panel.hidden){$('adminEmail').focus();}}
 async function adminLogin(){
  const email=$('adminEmail').value.trim(),password=$('adminPassword').value;
  if(!email||!password){alert('ایمیل و رمز عبور را وارد کن.');return}
@@ -232,7 +237,7 @@ async function adminLogin(){
      wishes=localCopy;localStorage.setItem('wishlist_v3',JSON.stringify(wishes));await syncToCloud();
    }else{wishes=[];localStorage.setItem('wishlist_v3','[]')}
  }else{wishes=loaded||[];localStorage.setItem('wishlist_v3',JSON.stringify(wishes))}
- setReadOnly(false);render();$('cloudStatus').textContent='وارد حساب مدیر شدی؛ تغییرات به‌صورت خودکار در فضای ابری ذخیره می‌شوند.';
+ $('adminPassword').value='';$('cloudPanel').hidden=true;setReadOnly(false);render();$('cloudStatus').textContent='وارد حساب مدیر شدی؛ تغییرات به‌صورت خودکار در فضای ابری ذخیره می‌شوند.';
 }
 async function adminLogout(){
  await sb.auth.signOut();isAdmin=false;cloudReady=false;
@@ -243,12 +248,26 @@ function setReadOnly(readonly){
  $('adminLogin').style.display=readonly?'none':'grid';
  if(readonly){$('cloudPanel').style.display=shareToken?'none':'block'}
 }
+async function refreshSharedWishes(){
+ if(!shareToken || !sharedMode || isAdmin || document.hidden) return;
+ const {data,error}=await sb.rpc('get_shared_wishes',{p_token:shareToken});
+ if(error) return;
+ const fresh=data||[];
+ if(JSON.stringify(fresh)!==JSON.stringify(wishes)){
+  wishes=fresh;
+  localStorage.setItem('wishlist_v3',JSON.stringify(wishes));
+  render();
+  $('cloudStatus').textContent='اطلاعات خانواده به‌روز شد؛ فقط مشاهده.';
+ }
+}
 async function loadShared(){
  sharedMode=true;isAdmin=false;setReadOnly(true);
  const {data,error}=await sb.rpc('get_shared_wishes',{p_token:shareToken});
  if(error){$('cloudStatus').textContent='لینک خانوادگی معتبر نیست یا دسترسی برقرار نشد.';wishes=[]}
- else{wishes=data||[];$('cloudStatus').textContent='نمایش خانوادگی؛ فقط مشاهده.'}
+ else{wishes=data||[];$('cloudStatus').textContent='نمایش خانوادگی؛ فقط مشاهده. به‌روزرسانی خودکار هر ۸ ثانیه.'}
  render();
+ if(sharedRefreshTimer) clearInterval(sharedRefreshTimer);
+ if(!error) sharedRefreshTimer=setInterval(refreshSharedWishes,8000);
 }
 async function createShareLink(){
  if(!isAdmin){alert('ابتدا به‌عنوان مدیر وارد شو.');return}
